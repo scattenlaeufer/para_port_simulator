@@ -15,6 +15,7 @@ unsigned long led_start;
 bool pulse_running;
 bool led_on;
 bool pulse_freq_running;
+int n_pulses;
 
 /*
  * 2 -> 3
@@ -22,6 +23,7 @@ bool pulse_freq_running;
  */
 
 void setup(){
+	n_pulses = 0;
 	pinMode(led_red, OUTPUT);
 	pinMode(led_green, OUTPUT);
 	pinMode(out_pin, OUTPUT);
@@ -46,12 +48,15 @@ void loop(){
 		pulse_freq_running = true;
 		pulse_freq_start = millis();
 		pulse_running = true;
+		n_pulses++;
 		pulse_start = millis();
 		digitalWrite(out_pin, HIGH);
 		digitalWrite(led_red, HIGH);
 		led_on = true;
 		led_start = millis();
 		digitalWrite(led_green, HIGH);
+		Serial.print(n_pulses);
+		Serial.print("\n");
 	}
 	if ( not pulse_freq_running ){
 		if ( not pulse_running ) {
@@ -60,14 +65,15 @@ void loop(){
 				led_on = true;
 				led_start = millis();
 				digitalWrite(out_pin, HIGH);
+				n_pulses++;
 				pulse_running = true;
 				pulse_start = millis();
+				Serial.print(n_pulses);
+				Serial.print("\n");
 			}
 		} else if ( millis() > pulse_start + pulse_dur ) {
 			pulse_running = false;
 			digitalWrite(out_pin, LOW);
-		} else {
-			Serial.print("PUSH\n");
 		}
 		if ( led_on and millis() > led_start + led_dur ) {
 			led_on = false;
@@ -89,7 +95,10 @@ void loop(){
 		led_start = millis();
 		digitalWrite(led_green, HIGH);
 		pulse_running = true;
+		n_pulses++;
 		pulse_start = millis();
 		digitalWrite(out_pin, HIGH);
+		Serial.print(n_pulses);
+		Serial.print("\n");
 	}
 }
